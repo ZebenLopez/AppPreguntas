@@ -1,0 +1,39 @@
+Normal
+Ciencia
+¿Cuál es el elemento más abundante en la atmósfera terrestre?
+principal
+Nitrógeno
+Oxígeno
+Dióxido de carbono
+Argón
+Nitrógeno
+
+Normal
+Biología
+¿Cuál es el nombre científico del ser humano?
+principal
+Homo sapiens sapiens
+Pan troglodytes
+Gorilla gorilla
+Pongo pygmaeus
+Homo sapiens sapiens
+
+Diabólico
+Deporte
+¿Quién ganó el Balón de Oro en 2010?
+interrogantes
+Lionel Messi
+Cristiano Ronaldo
+Andrés Iniesta
+Xavi Hernández
+Cristiano Ronaldo
+
+Normal
+Cine
+¿Quién dirigió la película 'El Padrino'?
+interrogantes
+Martin Scorsese
+Francis Ford Coppola
+Steven Spielberg
+Quentin Tarantino
+Francis Ford Coppola
