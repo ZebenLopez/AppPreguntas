@@ -1,39 +1,109 @@
-Normal
+Media
+Geografía
+¿Cuál es la capital de Canadá?
+ottawa
+Toronto
+Ottawa
+Motreal
+Vancouver
+Ottawa
+
+Media
+Biología
+¿Qué proceso celular implica la duplicación del ADN?
+mitosis
+Meiosis
+Transcripción
+Mitosis
+Traducción
+Mitosis
+
+Media
+informática
+¿Cuál es el protocolo de transferencia de archivos en la red?
+ftp
+HTTP
+FTP
+TCP
+UDP
+FTP
+
+Difícil
+Cine
+¿Quién dirigió la película "El Renacido"?
+renacido
+Christopher Nolan
+Alejandro González
+Quentin Tarantino
+Martin Scorsese
+Alejandro González
+
+Media
 Ciencia
 ¿Cuál es el elemento más abundante en la atmósfera terrestre?
-principal
+nitrogeno
 Nitrógeno
 Oxígeno
 Dióxido de carbono
 Argón
 Nitrógeno
 
-Normal
-Biología
-¿Cuál es el nombre científico del ser humano?
-principal
-Homo sapiens sapiens
-Pan troglodytes
-Gorilla gorilla
-Pongo pygmaeus
-Homo sapiens sapiens
-
 Diabólico
-Deporte
-¿Quién ganó el Balón de Oro en 2010?
-interrogantes
-Lionel Messi
-Cristiano Ronaldo
-Andrés Iniesta
-Xavi Hernández
-Cristiano Ronaldo
+Flora
+¿Cuál es el nombre del árbol más antiguo del mundo?
+pino
+Secuoya
+Mickael
+Pino Bristlecone
+Cedro del Líbano
+Pino Bristlecone
 
-Normal
+Facilísima
+Matemáticas
+¿Cuál es la conjetura no resuelta más antigua en matemáticas?
+fermat
+Conjetura de Goldbach
+Conjetura de Collatz
+Conjetura de Fermat
+Conjetura de los Gemelos
+Conjetura de Fermat
+
+Difícil
 Cine
-¿Quién dirigió la película 'El Padrino'?
-interrogantes
-Martin Scorsese
-Francis Ford Coppola
-Steven Spielberg
-Quentin Tarantino
-Francis Ford Coppola
+¿Qué marca de comida rápida sale en Little Nicky?
+nicky
+McDonald´s
+El Pollo Popeye
+KFC
+Los Pollos Gemelos
+El Pollo Popeye
+
+Media
+Química
+Elemento químico más pesado de la tabla periódica
+livermorio
+Uranio
+Plutonio
+Osmio
+Livermorio
+Livermorio
+
+Andar por casa
+Psicología
+¿Qué teórico sociológico propuso la teoría del conflicto?
+karl
+Emile Durkheim
+Karl Max
+Max Weber
+Émile Zola
+Karl Max
+
+Fácil
+Naturaleza
+¿Cómo se llama este fenómeno?
+aurora
+Cumulonimbo
+Marea magnética
+Aurora Boreal
+Sueño Lúcido
+Aurora Boreal

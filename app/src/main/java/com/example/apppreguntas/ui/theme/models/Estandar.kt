@@ -218,7 +218,7 @@ fun botonSiguiente(pregunta: PreguntaExamen, indice: (Int) -> Unit) {
 @Composable
 fun botonAtras(pregunta: PreguntaExamen, indice: (Int) -> Unit){
     Button(
-        onClick = { indice(1) },
+        onClick = { indice(-1) },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(39, 239, 245, 450)
         ),

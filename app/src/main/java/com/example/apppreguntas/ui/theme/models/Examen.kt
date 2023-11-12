@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -38,25 +39,48 @@ import com.example.apppreguntas.R
 import com.example.apppreguntas.ui.theme.persistence.PreguntaExamen
 import com.example.apppreguntas.ui.theme.utils.leerArchivo
 
+
 @Composable
 fun Examen(navController: NavHostController) {
     val listaPreguntas = leerArchivo(LocalContext.current)
-    var indice by remember { mutableStateOf(0) }
-    val esUltimaPregunta = indice == listaPreguntas.lastIndex
+    var index by remember { mutableStateOf(0) }
+    val esUltimaPregunta = index == listaPreguntas.lastIndex
 
-    if (indice > listaPreguntas.lastIndex) {
-        indice = listaPreguntas.lastIndex
+    var preguntasAcertadas by remember { mutableStateOf(0) }
+    var preguntasFalladas by remember { mutableStateOf(0) }
+
+    if (esUltimaPregunta) {
+        AlertDialog(
+            onDismissRequest = { /* No hacer nada */ },
+            title = { Text("Tu Nota") },
+            text = {
+                Column {
+                    Text("Has sacado un $preguntasAcertadas")
+                    Text("Has sacado un $preguntasFalladas")
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        navController.navigate("Inicio")
+                    }
+                ) {
+                    Text("Aceptar")
+                }
+            }
+        )
     }
-    mostrarPregunta(pregunta = listaPreguntas.get(indice), indice = { cambiaIndice ->
-        indice += cambiaIndice
+    mostrarPregunta(pregunta = listaPreguntas.get(index), indice = { cambiaIndice ->
+        index += cambiaIndice
     }, navController = navController)
 }
 
 
 @Composable
-fun mostrarPregunta(pregunta: PreguntaExamen,
-                    indice: (Int) -> Unit,
-                    navController: NavHostController
+fun mostrarPregunta(
+    pregunta: PreguntaExamen,
+    indice: (Int) -> Unit,
+    navController: NavHostController
 ) {
     Image(
         painter = painterResource(id = R.drawable.principal), contentDescription = null,
@@ -72,22 +96,35 @@ fun mostrarPregunta(pregunta: PreguntaExamen,
                 .padding(bottom = 15.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Dificultad: ${pregunta.dificultad}",
-                modifier = Modifier.padding(start = 10.dp))
-            Text(text = "Categoría: ${pregunta.categoria}",
-                modifier = Modifier.padding(end = 10.dp))
+            Text(
+                text = "Dificultad: ${pregunta.dificultad}",
+                modifier = Modifier.padding(start = 10.dp)
+            )
+            Text(
+                text = "Categoría: ${pregunta.categoria}",
+                modifier = Modifier.padding(end = 10.dp)
+            )
         }
         var selected by remember { mutableStateOf(false) }
-        pregunta(pregunta)
+        Text(
+            text = pregunta.pregunta,
+            textAlign = TextAlign.Center,
+            style = TextStyle(
+                fontSize = 25.sp,
+                fontStyle = FontStyle.Italic,
+                fontWeight = FontWeight.Bold,
+            )
+        )
         imagen(pregunta)
-
         respuestasNumeradas(pregunta, selected) { pintarSelected ->
             selected = pintarSelected
         }
-        Row (modifier = Modifier
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center){
-            botonVolver(navController)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            botonSalir(navController)
             botonSiguiente(pregunta) { cambiaIndice ->
                 indice(cambiaIndice)
                 selected = false
@@ -106,30 +143,24 @@ fun imagen(pregunta: PreguntaExamen) {
         contentDescription = null,
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.35f)
+            .fillMaxHeight(0.30f)
             .padding(16.dp)
     )
 }
 
 @Composable
-fun pregunta(pregunta: PreguntaExamen) {
-    Text(
-        text = pregunta.pregunta,
-        textAlign = TextAlign.Center,
-        style = TextStyle(
-            fontSize = 25.sp,
-            fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Bold,
-        )
+fun respuestasNumeradas(
+    pregunta: PreguntaExamen,
+    seleccionada: Boolean,
+    pintar: (Boolean) -> Unit
+) {
+
+    val opciones = listOf(
+        pregunta.respuesta1,
+        pregunta.respuesta2,
+        pregunta.respuesta3,
+        pregunta.respuesta4
     )
-}
-
-
-@Composable
-fun respuestasNumeradas(pregunta: PreguntaExamen, selected: Boolean, pintar: (Boolean) -> Unit) {
-
-    val opciones =
-        listOf(pregunta.respuesta1, pregunta.respuesta2, pregunta.respuesta3, pregunta.respuesta4)
 
     Column(
         modifier = Modifier
@@ -137,7 +168,11 @@ fun respuestasNumeradas(pregunta: PreguntaExamen, selected: Boolean, pintar: (Bo
             .padding(16.dp)
     ) {
         opciones.forEach { opcion ->
-            BotonRespuesta(opcion, pregunta, selected) { onSelectedChange ->
+            BotonRespuesta(
+                opcion,
+                pregunta,
+                seleccionada
+            ) { onSelectedChange ->
                 pintar(onSelectedChange)
             }
         }
@@ -146,23 +181,33 @@ fun respuestasNumeradas(pregunta: PreguntaExamen, selected: Boolean, pintar: (Bo
 
 @Composable
 fun BotonRespuesta(
-    text: String, pregunta: PreguntaExamen, selected: Boolean,
+    text: String,
+    pregunta: PreguntaExamen,
+    selected: Boolean,
     onSelectedChange: (Boolean) -> Unit
 ) {
     var color by remember {
         mutableStateOf(Color.Blue)
     }
+    var acierto by remember { mutableStateOf(0) }
+    var fallo by remember { mutableStateOf(0) }
+
     if (!selected) {
         color = Color(255, 154, 8, 450)
     }
     Button(
         onClick = {
             if (!selected) {
-                color = if (text.equals(pregunta.respuestaCorrecta)) {
-                    Color.Green
+                if (text.equals(pregunta.respuestaCorrecta)) {
+                    acierto++
                 } else {
-                    Color.Red
+                    fallo++
                 }
+                    color = if (text.equals(pregunta.respuestaCorrecta)) {
+                        Color.Green
+                    } else {
+                        Color.Red
+                    }
             }
             onSelectedChange(true)
         },
@@ -187,31 +232,31 @@ fun BotonRespuesta(
 
 @Composable
 fun botonSiguiente(pregunta: PreguntaExamen, indice: (Int) -> Unit) {
-        Button(
-            onClick = { indice(1) },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(39, 239, 245, 450)
-            ),
-            modifier = Modifier
-                .padding(16.dp)
-                .border(width = 2.dp, color = Color.Black, shape = RoundedCornerShape(50))
-        ) {
-            Text(
-                text = "Siguiente",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    color = Color.White
-                )
+    Button(
+        onClick = { indice(1) },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(39, 239, 245, 450)
+        ),
+        modifier = Modifier
+            .padding(16.dp)
+            .border(width = 2.dp, color = Color.Black, shape = RoundedCornerShape(50))
+    ) {
+        Text(
+            text = "Siguiente",
+            style = TextStyle(
+                fontSize = 20.sp,
+                color = Color.White
             )
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Flecha adelante"
-            )
-        }
+        )
+        Icon(
+            imageVector = Icons.Default.ArrowForward,
+            contentDescription = "Flecha adelante"
+        )
     }
+}
 
 @Composable
-fun botonVolver(navController: NavHostController){
+fun botonSalir(navController: NavHostController) {
     Button(
         onClick = { navController.navigate("Inicio") },
         colors = ButtonDefaults.buttonColors(

@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun AgnadirPreguntas(navController: NavHostController){
-
+    agregarPregunta()
 }
 
 
