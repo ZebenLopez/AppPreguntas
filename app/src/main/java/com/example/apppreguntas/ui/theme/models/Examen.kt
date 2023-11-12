@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,27 +42,48 @@ import com.example.apppreguntas.ui.theme.utils.leerArchivo
 
 
 @Composable
-fun Examen(navController: NavHostController) {
+fun Examen(navController: NavHostController,
+           preguntasAcertadas: MutableState<Int>,
+           preguntasFalladas: MutableState<Int>) {
     val listaPreguntas = leerArchivo(LocalContext.current)
     var index by remember { mutableStateOf(0) }
     val esUltimaPregunta = index == listaPreguntas.lastIndex
 
-    var preguntasAcertadas by remember { mutableStateOf(0) }
-    var preguntasFalladas by remember { mutableStateOf(0) }
+    val preguntasAcertadas2 = remember { mutableStateOf(0) }
+    val preguntasFalladas2 = remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
 
     if (esUltimaPregunta) {
+        showDialog = true
+    }
+
+    if (showDialog) {
         AlertDialog(
             onDismissRequest = { /* No hacer nada */ },
             title = { Text("Tu Nota") },
             text = {
                 Column {
-                    Text("Has sacado un $preguntasAcertadas")
-                    Text("Has sacado un $preguntasFalladas")
+                    Text("Has acertado ${preguntasAcertadas.value} preguntas")
+                    Text("Has fallado ${preguntasFalladas.value} preguntas")
+                    if (preguntasAcertadas.value == 0){
+                        Text("Has sacado un 0, plantéate poner curriculum en el McDonald´s")
+                    } else if (preguntasAcertadas.value > 0 && preguntasAcertadas.value < 5){
+                        Text("Lo siento, has supendido colega, a estudiar!!")
+                    } else if (preguntasAcertadas.value == 5){
+                        Text("Por los pelos, pero aprobado!")
+                    } else if (preguntasAcertadas.value > 6 && preguntasAcertadas.value < 8){
+                        Text("Muy bien, has aprobado!")
+                    } else if (preguntasAcertadas.value == 9){
+                        Text("Enorabuena, notaza!!")
+                    } else if (preguntasAcertadas.value == 10){
+                        Text("Un 10!!!!, a nadie le gustan los empollones!!")
+                    }
                 }
             },
             confirmButton = {
                 Button(
                     onClick = {
+                        showDialog = false
                         navController.navigate("Inicio")
                     }
                 ) {
@@ -69,18 +91,27 @@ fun Examen(navController: NavHostController) {
                 }
             }
         )
+    } else {
+        mostrarPregunta(
+            pregunta = listaPreguntas.get(index),
+            index = { cambiaIndice ->
+                index += cambiaIndice
+            },
+            navController = navController,
+            preguntasAcertadas = preguntasAcertadas,
+            preguntasFalladas = preguntasFalladas
+        )
     }
-    mostrarPregunta(pregunta = listaPreguntas.get(index), indice = { cambiaIndice ->
-        index += cambiaIndice
-    }, navController = navController)
 }
 
 
 @Composable
 fun mostrarPregunta(
     pregunta: PreguntaExamen,
-    indice: (Int) -> Unit,
-    navController: NavHostController
+    index: (Int) -> Unit,
+    navController: NavHostController,
+    preguntasAcertadas: MutableState<Int>,
+    preguntasFalladas: MutableState<Int>
 ) {
     Image(
         painter = painterResource(id = R.drawable.principal), contentDescription = null,
@@ -116,9 +147,9 @@ fun mostrarPregunta(
             )
         )
         imagen(pregunta)
-        respuestasNumeradas(pregunta, selected) { pintarSelected ->
+        respuestasNumeradas(pregunta, selected, { pintarSelected ->
             selected = pintarSelected
-        }
+        }, preguntasAcertadas, preguntasFalladas)
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -126,7 +157,7 @@ fun mostrarPregunta(
         ) {
             botonSalir(navController)
             botonSiguiente(pregunta) { cambiaIndice ->
-                indice(cambiaIndice)
+                index(cambiaIndice)
                 selected = false
             }
         }
@@ -152,7 +183,9 @@ fun imagen(pregunta: PreguntaExamen) {
 fun respuestasNumeradas(
     pregunta: PreguntaExamen,
     seleccionada: Boolean,
-    pintar: (Boolean) -> Unit
+    pintar: (Boolean) -> Unit,
+    preguntasAcertadas: MutableState<Int>,
+    preguntasFalladas: MutableState<Int>
 ) {
 
     val opciones = listOf(
@@ -171,10 +204,11 @@ fun respuestasNumeradas(
             BotonRespuesta(
                 opcion,
                 pregunta,
-                seleccionada
-            ) { onSelectedChange ->
-                pintar(onSelectedChange)
-            }
+                seleccionada,
+                pintar,
+                preguntasAcertadas,
+                preguntasFalladas
+            )
         }
     }
 }
@@ -184,13 +218,11 @@ fun BotonRespuesta(
     text: String,
     pregunta: PreguntaExamen,
     selected: Boolean,
-    onSelectedChange: (Boolean) -> Unit
+    onSelectedChange: (Boolean) -> Unit,
+    preguntasAcertadas: MutableState<Int>,
+    preguntasFalladas: MutableState<Int>
 ) {
-    var color by remember {
-        mutableStateOf(Color.Blue)
-    }
-    var acierto by remember { mutableStateOf(0) }
-    var fallo by remember { mutableStateOf(0) }
+    var color by remember { mutableStateOf(Color.Blue) }
 
     if (!selected) {
         color = Color(255, 154, 8, 450)
@@ -199,15 +231,15 @@ fun BotonRespuesta(
         onClick = {
             if (!selected) {
                 if (text.equals(pregunta.respuestaCorrecta)) {
-                    acierto++
+                    preguntasAcertadas.value += 1
                 } else {
-                    fallo++
+                    preguntasFalladas.value += 1
                 }
-                    color = if (text.equals(pregunta.respuestaCorrecta)) {
-                        Color.Green
-                    } else {
-                        Color.Red
-                    }
+                color = if (text.equals(pregunta.respuestaCorrecta)) {
+                    Color.Green
+                } else {
+                    Color.Red
+                }
             }
             onSelectedChange(true)
         },
