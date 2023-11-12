@@ -44,13 +44,11 @@ import com.example.apppreguntas.ui.theme.utils.leerArchivo
 @Composable
 fun Examen(navController: NavHostController,
            preguntasAcertadas: MutableState<Int>,
-           preguntasFalladas: MutableState<Int>) {
+           preguntasFalladas: MutableState<Int>
+) {
     val listaPreguntas = leerArchivo(LocalContext.current)
     var index by remember { mutableStateOf(0) }
     val esUltimaPregunta = index == listaPreguntas.lastIndex
-
-    val preguntasAcertadas2 = remember { mutableStateOf(0) }
-    val preguntasFalladas2 = remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
     if (esUltimaPregunta) {
@@ -92,7 +90,7 @@ fun Examen(navController: NavHostController,
             }
         )
     } else {
-        mostrarPregunta(
+        verPregunta(
             pregunta = listaPreguntas.get(index),
             index = { cambiaIndice ->
                 index += cambiaIndice
@@ -106,7 +104,7 @@ fun Examen(navController: NavHostController,
 
 
 @Composable
-fun mostrarPregunta(
+fun verPregunta(
     pregunta: PreguntaExamen,
     index: (Int) -> Unit,
     navController: NavHostController,
@@ -166,11 +164,11 @@ fun mostrarPregunta(
 
 @Composable
 fun imagen(pregunta: PreguntaExamen) {
-    val imageResourceID = LocalContext.current.resources.getIdentifier(
+    val idImagen = LocalContext.current.resources.getIdentifier(
         pregunta.imagen, "drawable", LocalContext.current.packageName
     )
     Image(
-        painter = painterResource(id = imageResourceID),
+        painter = painterResource(id = idImagen),
         contentDescription = null,
         modifier = Modifier
             .fillMaxWidth()
@@ -183,12 +181,12 @@ fun imagen(pregunta: PreguntaExamen) {
 fun respuestasNumeradas(
     pregunta: PreguntaExamen,
     seleccionada: Boolean,
-    pintar: (Boolean) -> Unit,
+    colorear: (Boolean) -> Unit,
     preguntasAcertadas: MutableState<Int>,
     preguntasFalladas: MutableState<Int>
 ) {
 
-    val opciones = listOf(
+    val listaRespuestas = listOf(
         pregunta.respuesta1,
         pregunta.respuesta2,
         pregunta.respuesta3,
@@ -200,12 +198,12 @@ fun respuestasNumeradas(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        opciones.forEach { opcion ->
+        listaRespuestas.forEach { opcion ->
             BotonRespuesta(
                 opcion,
                 pregunta,
                 seleccionada,
-                pintar,
+                colorear,
                 preguntasAcertadas,
                 preguntasFalladas
             )

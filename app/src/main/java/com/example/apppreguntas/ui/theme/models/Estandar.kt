@@ -41,24 +41,23 @@ import com.example.apppreguntas.ui.theme.utils.leerArchivo
 @Composable
 fun Estandar(navController: NavHostController) {
     val listaPreguntas = leerArchivo(LocalContext.current)
-    var indice by remember { mutableStateOf(0) }
-    val esUltimaPregunta = indice == listaPreguntas.lastIndex
+    var index by remember { mutableStateOf(0) }
 
-    if (indice == -1) {
-        indice = listaPreguntas.lastIndex
-    } else if (indice > listaPreguntas.lastIndex) {
-        indice = 0
+    if (index == -1) {
+        index = listaPreguntas.lastIndex
+    } else if (index > listaPreguntas.lastIndex) {
+        index = 0
     }
-    mostrarPregunta(pregunta = listaPreguntas.get(indice), indice = { cambiaIndice ->
-        indice += cambiaIndice
+    verPregunta(pregunta = listaPreguntas.get(index), indice = { cambiaIndice ->
+        index += cambiaIndice
     }, navController = navController)
 }
 
 
 @Composable
-fun mostrarPregunta(pregunta: PreguntaExamen,
-                    indice: (Int) -> Unit,
-                    navController: NavHostController
+fun verPregunta(pregunta: PreguntaExamen,
+                indice: (Int) -> Unit,
+                navController: NavHostController
 ) {
     Image(
         painter = painterResource(id = R.drawable.principal), contentDescription = null,
@@ -103,11 +102,11 @@ fun mostrarPregunta(pregunta: PreguntaExamen,
 
 @Composable
 fun imagen(pregunta: PreguntaExamen) {
-    val imageResourceID = LocalContext.current.resources.getIdentifier(
+    val idImagen = LocalContext.current.resources.getIdentifier(
         pregunta.imagen, "drawable", LocalContext.current.packageName
     )
     Image(
-        painter = painterResource(id = imageResourceID),
+        painter = painterResource(id = idImagen),
         contentDescription = null,
         modifier = Modifier
             .fillMaxWidth()
@@ -133,15 +132,18 @@ fun pregunta(pregunta: PreguntaExamen) {
 @Composable
 fun respuestasNumeradas(pregunta: PreguntaExamen, selected: Boolean, pintar: (Boolean) -> Unit) {
 
-    val opciones =
-        listOf(pregunta.respuesta1, pregunta.respuesta2, pregunta.respuesta3, pregunta.respuesta4)
+    val listaPreguntas = listOf(
+        pregunta.respuesta1,
+        pregunta.respuesta2,
+        pregunta.respuesta3,
+        pregunta.respuesta4)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        opciones.forEach { opcion ->
+        listaPreguntas.forEach { opcion ->
             BotonRespuesta(opcion, pregunta, selected) { onSelectedChange ->
                 pintar(onSelectedChange)
             }
