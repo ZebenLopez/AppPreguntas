@@ -42,8 +42,8 @@ fun PantallaInicio(navController: NavHostController?) {
             .fillMaxHeight()
     ) {
         formatoTexto(
-            texto = "Bienvenido a la app de preguntas y respuestas para la clase de PLG.",
-            tamanio = 18.sp, color = Color.White
+            texto = "Bienvenido a la aplicación de preguntas y respuestas para la clase de PLG.",
+            tamanio = 18.sp, color = Color.White,
         )
         formatoTexto(texto = "Elegir un formato de juego.", tamanio = 24.sp, color = Color.White)
         formatoBoton(texto = "Estandar",
